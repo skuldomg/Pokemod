@@ -1,0 +1,9 @@
+﻿{
+	"Name": "Pokemod",
+	"Author": "skuldomg",
+	"Version": "0.0.1",
+	"Description": "A total conversion of Stardew Valley to a Pokémon breeding game.",
+	"UniqueID": "skuldomg.pokemod",
+	"EntryDll": "pokemod.dll",
+	"MinimumApiVersion": "2.7"
+}

@@ -1,0 +1,10 @@
+﻿Breeding and raising Pokémon for a living
+- breed and raise Pokémon in different habitats
+- grow and use berries to make Pokémon happier / trigger desired traits, influence male/female born, etc.
+
+1. Make male / female animals (and add a way to check for gender, later: different appearances)
+	1.1 Require at least one male & one female for breeding to occur
+
+Choose your starter
+Quests from villagers / randoms asking for specific Pokémon (ie. male Pikachu, female Jigglypuff with the "grumpy" trait, ...)
+Release "undesired" Pokémon into the wild (or grind them up into candy)

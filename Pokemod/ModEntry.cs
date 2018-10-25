@@ -33,7 +33,7 @@ namespace Pokemod
                 return;
 
             this.Monitor.Log("Welcome to Pokémod!");
-            Game1.activeClickableMenu = (IClickableMenu)new PurchaseAnimalsMenu(getMyAnimalStock());
+            Game1.activeClickableMenu = (IClickableMenu)new MyPurchaseAnimalsMenu(getMyAnimalStock(), this.Helper);
         }
 
         // Change Marnie's purchase stock
@@ -42,16 +42,16 @@ namespace Pokemod
             if (Game1.activeClickableMenu is PurchaseAnimalsMenu animalsMenu && trigger == 0)
             {
                 this.Monitor.Log("Changing Marnie's stock.");
-                Game1.activeClickableMenu = (IClickableMenu)new PurchaseAnimalsMenu(getMyAnimalStock());
+                Game1.activeClickableMenu = (IClickableMenu)new MyPurchaseAnimalsMenu(getMyAnimalStock(), this.Helper);
                 trigger = 1;
 
                 // TODO für neue animals -> PurchaseAnimalsMenu überschreiben, sodass receiveLeftClick statt
                 // this.animalBeingPurchased = new FarmAnimal(textureComponent.hoverText, Game1.multiplayer.getNewID(), Game1.player.UniqueMultiplayerID);
-                // ... new MyFarmAnimal aufruft
+                // ... new MyFarmAnimal aufruft (und eigene Strings in getAnimalDescription  / getAnimaTitle aufruft)
                 // -> MyFarmAnimal als Kopie von FarmAnimal schreiben, sodass im Konstruktor und weiteren Verlauf eigene animals eingebaut werden können
             }
             else
-                trigger = 0;
+                trigger = 0;            
         }
 
         private List<StardewValley.Object> getMyAnimalStock()
@@ -63,8 +63,6 @@ namespace Pokemod
             object1.Type = null;
             object1.displayName = "Mein Chicken";
             objectList.Add(object1);
-
-            // TODO: See where hovertext and description are loaded
 
             return objectList;
         }

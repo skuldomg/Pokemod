@@ -41,7 +41,7 @@ namespace Pokemod
         private bool onFarm;
         private bool namingAnimal;
         private bool freeze;
-        private FarmAnimal animalBeingPurchased;
+        private MyFarmAnimal animalBeingPurchased;
         private TextBox textBox;
         private TextBoxEvent e;
         private Building newAnimalHome;
@@ -56,10 +56,29 @@ namespace Pokemod
             this.helper = helper;
             
             this.height += 64;
+
+            // Iterate through the stock and create the list of ClickableTextureComponents animalsToPurchase
             for (int index = 0; index < stock.Count; ++index)
             {
                 List<ClickableTextureComponent> animalsToPurchase = this.animalsToPurchase;
-                ClickableTextureComponent textureComponent = new ClickableTextureComponent(string.Concat((object)stock[index].salePrice()), new Microsoft.Xna.Framework.Rectangle(this.xPositionOnScreen + IClickableMenu.borderWidth + index % 3 * 64 * 2, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth / 2 + index / 3 * 85, 128, 64), (string)null, stock[index].Name, Game1.mouseCursors, new Microsoft.Xna.Framework.Rectangle(index % 3 * 16 * 2, 448 + index / 3 * 16, 32, 16), 4f, stock[index].Type == null);
+
+                ClickableTextureComponent textureComponent = new ClickableTextureComponent(string.Concat((object)stock[index].salePrice()), 
+                    new Microsoft.Xna.Framework.Rectangle(this.xPositionOnScreen + IClickableMenu.borderWidth + index % 3 * 64 * 2, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth / 2 + index / 3 * 85, 128, 64), 
+                    (string)null, 
+                    stock[index].Name, 
+                    // Texture file to load
+                    Game1.mouseCursors, 
+                    /* Source rectangle of the texture file to load
+                     * 
+                     *   The base game's code assumes that animals in the purchase menu are always in the same order,
+                     *   and finds the appropriate texture by index
+                     *
+                     *   --> TODO: change this to check for the stock[index].Name and load the appropriate texture
+                    */
+                    new Microsoft.Xna.Framework.Rectangle(index % 3 * 16 * 2, 448 + index / 3 * 16, 32, 16), 
+                    4f, 
+                    stock[index].Type == null);
+
                 textureComponent.item = (Item)stock[index];
                 textureComponent.myID = index;
                 textureComponent.rightNeighborID = index % 3 == 2 ? -1 : index + 1;
@@ -68,16 +87,21 @@ namespace Pokemod
                 textureComponent.upNeighborID = index - 3;
                 animalsToPurchase.Add(textureComponent);
             }
+
+            // OK Button
             ClickableTextureComponent textureComponent1 = new ClickableTextureComponent(new Microsoft.Xna.Framework.Rectangle(this.xPositionOnScreen + this.width + 4, this.yPositionOnScreen + this.height - 64 - IClickableMenu.borderWidth, 64, 64), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 47, -1, -1), 1f, false);
             textureComponent1.myID = 101;
             textureComponent1.upNeighborID = 103;
             textureComponent1.leftNeighborID = 103;
             this.okButton = textureComponent1;
+
+            // Random Button
             ClickableTextureComponent textureComponent2 = new ClickableTextureComponent(new Microsoft.Xna.Framework.Rectangle(this.xPositionOnScreen + this.width + 51 + 64, Game1.viewport.Height / 2, 64, 64), Game1.mouseCursors, new Microsoft.Xna.Framework.Rectangle(381, 361, 10, 10), 4f, false);
             textureComponent2.myID = 103;
             textureComponent2.downNeighborID = 101;
             textureComponent2.rightNeighborID = 101;
             this.randomButton = textureComponent2;
+
             MyPurchaseAnimalsMenu.menuHeight = 320;
             MyPurchaseAnimalsMenu.menuWidth = 448;
             this.textBox = new TextBox((Texture2D)null, (Texture2D)null, Game1.dialogueFont, Game1.textColor);
@@ -92,18 +116,21 @@ namespace Pokemod
                 rightNeighborID = 102,
                 downNeighborID = 101
             };
+
             ClickableTextureComponent textureComponent3 = new ClickableTextureComponent(new Microsoft.Xna.Framework.Rectangle(this.textBox.X + this.textBox.Width + 64 + 48 - 8, Game1.viewport.Height / 2 + 4, 64, 64), Game1.mouseCursors, new Microsoft.Xna.Framework.Rectangle(381, 361, 10, 10), 4f, false);
             textureComponent3.myID = 103;
             textureComponent3.leftNeighborID = 102;
             textureComponent3.downNeighborID = 101;
             textureComponent3.rightNeighborID = 101;
             this.randomButton = textureComponent3;
+
             ClickableTextureComponent textureComponent4 = new ClickableTextureComponent(new Microsoft.Xna.Framework.Rectangle(this.textBox.X + this.textBox.Width + 32 + 4, Game1.viewport.Height / 2 - 8, 64, 64), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46, -1, -1), 1f, false);
             textureComponent4.myID = 102;
             textureComponent4.rightNeighborID = 103;
             textureComponent4.leftNeighborID = 104;
             textureComponent4.downNeighborID = 101;
             this.doneNamingButton = textureComponent4;
+
             if (!Game1.options.SnappyMenus)
                 return;
             this.populateClickableComponentList();
@@ -140,7 +167,8 @@ namespace Pokemod
                     this.animalBeingPurchased.home = this.newAnimalHome;
                     this.animalBeingPurchased.homeLocation.Value = new Vector2((float)(int)((NetFieldBase<int, NetInt>)this.newAnimalHome.tileX), (float)(int)((NetFieldBase<int, NetInt>)this.newAnimalHome.tileY));
                     this.animalBeingPurchased.setRandomPosition((GameLocation)((NetFieldBase<GameLocation, NetRef<GameLocation>>)this.animalBeingPurchased.home.indoors));
-                    (this.newAnimalHome.indoors.Value as AnimalHouse).animals.Add((long)((NetFieldBase<long, NetLong>)this.animalBeingPurchased.myID), this.animalBeingPurchased);
+                    // TODO: MyAnimalHouse
+                    //(this.newAnimalHome.indoors.Value as AnimalHouse).animals.Add((long)((NetFieldBase<long, NetLong>)this.animalBeingPurchased.myID), this.animalBeingPurchased);
                     (this.newAnimalHome.indoors.Value as AnimalHouse).animalsThatLiveHere.Add((long)((NetFieldBase<long, NetLong>)this.animalBeingPurchased.myID));
                     this.newAnimalHome = (Building)null;
                     this.namingAnimal = false;
@@ -266,7 +294,8 @@ namespace Pokemod
                             this.animalBeingPurchased.home = this.newAnimalHome;
                             this.animalBeingPurchased.homeLocation.Value = new Vector2((float)(int)((NetFieldBase<int, NetInt>)this.newAnimalHome.tileX), (float)(int)((NetFieldBase<int, NetInt>)this.newAnimalHome.tileY));
                             this.animalBeingPurchased.setRandomPosition((GameLocation)((NetFieldBase<GameLocation, NetRef<GameLocation>>)this.animalBeingPurchased.home.indoors));
-                            (this.newAnimalHome.indoors.Value as AnimalHouse).animals.Add((long)((NetFieldBase<long, NetLong>)this.animalBeingPurchased.myID), this.animalBeingPurchased);
+                            // TODO: MyAnimalHouse
+                            //(this.newAnimalHome.indoors.Value as AnimalHouse).animals.Add((long)((NetFieldBase<long, NetLong>)this.animalBeingPurchased.myID), this.animalBeingPurchased);
                             (this.newAnimalHome.indoors.Value as AnimalHouse).animalsThatLiveHere.Add((long)((NetFieldBase<long, NetLong>)this.animalBeingPurchased.myID));
                             this.newAnimalHome = (Building)null;
                             this.namingAnimal = false;
@@ -279,7 +308,9 @@ namespace Pokemod
                             Game1.player.money -= this.priceOfAnimal;
                             Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:PurchaseAnimalsMenu.cs.11324", (object)this.animalBeingPurchased.displayType), Color.LimeGreen, 3500f));
                             //this.animalBeingPurchased = new FarmAnimal((string)((NetFieldBase<string, NetString>)this.animalBeingPurchased.type), Game1.multiplayer.getNewID(), (long)((NetFieldBase<long, NetLong>)Game1.player.uniqueMultiplayerID));
-                            this.animalBeingPurchased = new FarmAnimal((string)((NetFieldBase<string, NetString>)this.animalBeingPurchased.type), helper.Multiplayer.GetNewID(), (long)((NetFieldBase<long, NetLong>)Game1.player.uniqueMultiplayerID));
+
+                            // TODO: Replace with new MyFarmAnimal
+                            this.animalBeingPurchased = new MyFarmAnimal((string)((NetFieldBase<string, NetString>)this.animalBeingPurchased.type), helper.Multiplayer.GetNewID(), (long)((NetFieldBase<long, NetLong>)Game1.player.uniqueMultiplayerID));
 
 
 
@@ -321,7 +352,9 @@ namespace Pokemod
                             Game1.playSound("smallSelect");
                             this.onFarm = true;
                             //this.animalBeingPurchased = new FarmAnimal(textureComponent.hoverText, Game1.multiplayer.getNewID(), Game1.player.UniqueMultiplayerID);
-                            this.animalBeingPurchased = new FarmAnimal(textureComponent.hoverText, helper.Multiplayer.GetNewID(), Game1.player.UniqueMultiplayerID);
+
+                            // TODO: Replace with new MyFarmAnimal
+                            this.animalBeingPurchased = new MyFarmAnimal(textureComponent.hoverText, helper.Multiplayer.GetNewID(), Game1.player.UniqueMultiplayerID);
                             this.priceOfAnimal = num;
                         }
                         else
@@ -506,8 +539,6 @@ namespace Pokemod
                     return Game1.content.LoadString("Strings\\StringsFromCSFiles:Utility.cs.5945");
                 case "Sheep":
                     return Game1.content.LoadString("Strings\\StringsFromCSFiles:Utility.cs.5942");
-                case "Mein Chicken":
-                    return "Mein Chicken";
                 case "My Chicken":
                     return "My Chicken";
                 default:
@@ -533,8 +564,6 @@ namespace Pokemod
                     return Game1.content.LoadString("Strings\\StringsFromCSFiles:PurchaseAnimalsMenu.cs.11340") + Environment.NewLine + Game1.content.LoadString("Strings\\StringsFromCSFiles:PurchaseAnimalsMenu.cs.11335");
                 case "Sheep":
                     return Game1.content.LoadString("Strings\\StringsFromCSFiles:PurchaseAnimalsMenu.cs.11352") + Environment.NewLine + Game1.content.LoadString("Strings\\StringsFromCSFiles:PurchaseAnimalsMenu.cs.11344");
-                case "Mein Chicken":
-                    return "Zis looks like a regular chicken but something is a little off...";
                 case "My Chicken":
                     return "This looks like a regular chicken but something is a little off...";
                 default:

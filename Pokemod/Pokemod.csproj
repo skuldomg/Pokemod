@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ModEntry.cs" />
+    <Compile Include="MyFarmAnimal.cs" />
     <Compile Include="MyPurchaseAnimalsMenu.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

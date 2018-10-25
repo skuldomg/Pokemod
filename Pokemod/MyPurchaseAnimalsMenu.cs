@@ -74,6 +74,7 @@ namespace Pokemod
                      *   and finds the appropriate texture by index
                      *
                      *   --> TODO: change this to check for the stock[index].Name and load the appropriate texture
+                     *   - Add custom textures with CP and load them here
                     */
                     new Microsoft.Xna.Framework.Rectangle(index % 3 * 16 * 2, 448 + index / 3 * 16, 32, 16), 
                     4f, 
